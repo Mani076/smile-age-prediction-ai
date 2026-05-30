@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smile Detection & Age Prediction API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 36px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        
+        .status {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .status h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s;
+            display: block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .info-box li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-box li:last-child {
+            border-bottom: none;
+        }
+        
+        .endpoint {
+            font-family: 'Courier New', monospace;
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Smile Detection API</h1>
+        <p class="subtitle">Age Prediction & Smile Detection using AI</p>
+        
+        <div class="status">
+            <h2>✅ Server is Running</h2>
+            <p>Backend API is active on port 5000</p>
+        </div>
+        
+        <div class="buttons">
+            <a href="register.html" class="btn btn-primary">📝 Register</a>
+            <a href="login.html" class="btn btn-primary">🔐 Login</a>
+            <a href="/api/health" class="btn btn-secondary">🏥 Health Check</a>
+            <a href="/api/modules" class="btn btn-secondary">📦 View Modules</a>
+        </div>
+        
+        <div class="info-box">
+            <h3>📡 Available Endpoints</h3>
+            <ul>
+                <li><span class="endpoint">GET /api/health</span> - Server health check</li>
+                <li><span class="endpoint">GET /api/modules</span> - List all modules</li>
+                <li><span class="endpoint">POST /api/auth/register</span> - Register user</li>
+                <li><span class="endpoint">POST /api/auth/login</span> - Login user</li>
+                <li><span class="endpoint">GET /api/user/profile</span> - Get profile (auth)</li>
+                <li><span class="endpoint">POST /api/prediction/analyze</span> - Analyze image (auth)</li>
+            </ul>
+        </div>
+        
+        <div class="info-box">
+            <h3>🎯 Quick Start</h3>
+            <ul>
+                <li>1. Click "Register" to create an account</li>
+                <li>2. Click "Login" to get your access token</li>
+                <li>3. Use Postman for advanced API testing</li>
+                <li>4. Import: <code>backend/Postman_Collection.json</code></li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>Base URL: <strong>http://localhost:5000/api</strong></p>
+            <p>Total Endpoints: <strong>22</strong> | Modules: <strong>5</strong></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Smile Detection API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .info-item label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-item value {
+            display: block;
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-box .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-box .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎭 User Dashboard</h1>
+            <p>Smile Detection & Age Prediction API</p>
+            <div class="user-info">
+                <div id="welcomeMessage">Loading...</div>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        
+        <div class="card">
+            <h2>👤 Profile Information</h2>
+            <div id="profileInfo" class="loading">Loading profile...</div>
+        </div>
+        
+        <div class="card">
+            <h2>📊 Statistics</h2>
+            <div id="statsInfo" class="loading">Loading statistics...</div>
+        </div>
+        
+        <div class="card">
+            <h2>🔗 Quick Actions</h2>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="refreshProfile()">🔄 Refresh Profile</button>
+                <button class="btn btn-primary" onclick="viewHistory()">📜 View History</button>
+                <button class="btn btn-primary" onclick="viewAnalytics()">📈 View Analytics</button>
+                <button class="btn btn-secondary" onclick="window.location.href='/'">🏠 Home</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:5001/api';
+        let accessToken = localStorage.getItem('access_token');
+        
+        if (!accessToken) {
+            window.location.href = '/login.html';
+        }
+        
+        async function fetchProfile() {
+            try {
+                const response = await fetch(`${API_BASE}/user/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (response.status === 401) {
+                    showError('Session expired. Please login again.');
+                    setTimeout(() => window.location.href = '/login.html', 2000);
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayProfile(data);
+                } else {
+                    showError('Failed to load profile: ' + JSON.stringify(data));
+                }
+            } catch (error) {
+                showError('Connection error: ' + error.message);
+            }
+        }
+        
+        async function fetchStatistics() {
+            try {
+                const response = await fetch(`${API_BASE}/history/statistics`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    displayStatistics(data);
+                } else {
+                    document.getElementById('statsInfo').innerHTML = '<p>No statistics available yet.</p>';
+                }
+            } catch (error) {
+                document.getElementById('statsInfo').innerHTML = '<p>Could not load statistics.</p>';
+            }
+        }
+        
+        function displayProfile(profile) {
+            document.getElementById('welcomeMessage').innerHTML = 
+                `<strong>Welcome, ${profile.first_name} ${profile.last_name}!</strong>`;
+            
+            document.getElementById('profileInfo').innerHTML = `
+                <div class="profile-info">
+                    <div class="info-item">
+                        <label>First Name</label>
+                        <value>${profile.first_name}</value>
+                    </div>
+                    <div class="info-item">
+                        <label>Last Name</label>
+                        <value>${profile.last_name}</value>
+                    </div>
+                    <div class="info-item">
+                        <label>Email</label>
+                        <value>${profile.email}</value>
+                    </div>
+                    <div class="info-item">
+                        <label>Phone Number</label>
+                        <value>${profile.phone_number}</value>
+                    </div>
+                    <div class="info-item">
+                        <label>Account Status</label>
+                        <value>${profile.is_active ? '✅ Active' : '❌ Inactive'}</value>
+                    </div>
+                    <div class="info-item">
+                        <label>Member Since</label>
+                        <value>${new Date(profile.created_at).toLocaleDateString()}</value>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function displayStatistics(stats) {
+            document.getElementById('statsInfo').innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="number">${stats.total_predictions || 0}</div>
+                        <div class="label">Total Predictions</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">${stats.smiling_count || 0}</div>
+                        <div class="label">Smiling</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">${stats.not_smiling_count || 0}</div>
+                        <div class="label">Not Smiling</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="number">${stats.smiling_percentage ? stats.smiling_percentage.toFixed(1) : 0}%</div>
+                        <div class="label">Smile Rate</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function logout() {
+            localStorage.removeItem('access_token');
+            window.location.href = '/login.html';
+        }
+        
+        function refreshProfile() {
+            fetchProfile();
+            fetchStatistics();
+        }
+        
+        function viewHistory() {
+            alert('History view coming soon! Use Postman to access /api/history/predictions');
+        }
+        
+        function viewAnalytics() {
+            alert('Analytics view coming soon! Use Postman to access /api/analytics/report');
+        }
+        
+        // Load data on page load
+        fetchProfile();
+        fetchStatistics();
+    </script>
+</body>
+</html>

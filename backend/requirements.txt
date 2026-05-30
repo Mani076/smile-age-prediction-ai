@@ -1,0 +1,17 @@
+# Backend Dependencies
+Flask==3.0.0
+flask-cors==4.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-JWT-Extended==4.6.0
+Flask-Bcrypt==1.0.1
+python-dotenv==1.0.0
+email-validator==2.1.0
+gunicorn==21.2.0
+
+# ML Dependencies (compatible versions)
+numpy==1.24.3
+protobuf==3.20.3
+opencv-python==4.8.1.78
+tensorflow==2.15.0
+keras==2.15.0
+mediapipe==0.10.9
